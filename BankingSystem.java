@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Banking;
+
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -15,25 +15,29 @@ public class BankingSystem
     static ArrayList<Client> allClients;
     static ArrayList<BankAccount> allAccounts;
     static Scanner input;
-    
+    private static int size;
+
+    private static int getSize(){
+        return allAccounts.size();
+    }
     static void showAllAccounts(){
-        for(int i =0;i<allAccounts.size();i++){
+        for(int i =0;i< getSize();i++){
             allAccounts.get(i).view();
             System.out.println("*******************************");
         }
     }
 
     static BankAccount search(int accountId){
-        for(int i=0;i<allAccounts.size();i++){
+        for(int i=0;i<getSize();i++){
             if(accountId==allAccounts.get(i).getAccountId()){
                 return allAccounts.get(i);
             }
         }
         return null;
     }
-    
+
     static int searchById(int accountId){
-        for(int i=0;i<allAccounts.size();i++){
+        for(int i=0;i<getSize();i++){
             if(accountId==allAccounts.get(i).getAccountId()){
                 return i;
             }
@@ -49,7 +53,6 @@ public class BankingSystem
             return;
         }
         acc.view();
-        
     }
 
     static void removeAccount(){
@@ -94,7 +97,7 @@ public class BankingSystem
             System.err.println("invalid input");
             return;
         }
-        BankAccount newAccount =null;
+        BankAccount newAccount = null;
         System.out.println("enter account balance");
         double balance = input.nextDouble();
         if(accType==1){
@@ -173,6 +176,23 @@ public class BankingSystem
 
     static void loan(BankAccount acc){
 
+    }
+    static void listUnpaidLoans() {
+        System.out.println("Listing Unpaid Loans...");
+        boolean found = false;
+        for (BankAccount account : allAccounts) {
+            if (account instanceof SavingsBankAccount) {
+                SavingsBankAccount sba = (SavingsBankAccount) account;
+                Loan loan = new Loan();
+                if (loan.getLoanAmount() > 0) {
+                    System.out.println("Account ID: " + account.getAccountId() + ", Loan Amount: " + loan.getLoanAmount());
+                    found = true;
+                }
+            }
+        }
+        if (!found) {
+            System.out.println("No unpaid loans found.");
+        }
     }
 
     static void user(){
@@ -260,25 +280,60 @@ public class BankingSystem
     
     }
 
-
-    static void administer(){
-
-        final String adminPass = "1234";
-
-        while (true) {
-            input.nextLine();
-            System.out.print("Enter admin passoword: ");
-            String pass = input.nextLine();
+static void administer() {
+    final String adminPass = "1234";
 
 
-            if(!adminPass.equals(pass)){
-                System.out.println("Invalid password, try again!!");
-                continue;
-            }
-            break;
+    while (true) {
+        input.nextLine();
+        System.out.print("Enter admin password: ");
+        String pass = input.nextLine();
+        if (!adminPass.equals(pass)) {
+            System.out.println("Invalid password, try again!!");
+            continue;
         }
+        break;
     }
 
+
+    while (true) {
+        System.out.println("\nAdmin Menu:");
+        System.out.println("1. Add Account");
+        System.out.println("2. List All Accounts");
+        System.out.println("3. Search Account by ID");
+        System.out.println("4. Remove Account");
+        System.out.println("5. List Unpaid Loans");
+        System.out.println("0. Exit Admin Mode");
+        System.out.print("Enter your choice: ");
+        int option = input.nextInt();
+
+        switch (option) {
+            case 1:
+                addAccount();
+                break;
+            case 2:
+                showAllAccounts();
+                break;
+            case 3:
+                System.out.print("Enter account ID to search: ");
+                int id = input.nextInt();
+                searchForAccount(id);
+                break;
+            case 4:
+                removeAccount();
+                break;
+            case 5:
+                listUnpaidLoans();
+                break;
+            case 0:
+                System.out.println("Exiting Admin Mode...");
+                return;
+            default:
+                System.out.println("Invalid choice, try again!");
+                break;
+        }
+    }
+}
     public static void main(String[] args)
     {
         allAccounts = new ArrayList<BankAccount>();

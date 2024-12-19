@@ -14,8 +14,7 @@ public class BankAccount{
 
 
     public BankAccount(double balance2)
-    {   
-        balance=0;
+    {
         this.balance=balance2;
         accountId = IDSGENERATOR++;
     }
@@ -30,7 +29,8 @@ public class BankAccount{
         return password;
     }
 
-    public void setPassword( String password) {
+    private void setPassword( String password) {
+
         this.password = password;
     }
 
@@ -38,7 +38,7 @@ public class BankAccount{
         return accountId;
     }
 
-    public void setAccountId(int accountId)
+    private void setAccountId(int accountId)
     {
         this.accountId = accountId;
     }
@@ -48,17 +48,17 @@ public class BankAccount{
         return balance;
     }
 
-    public void setBalance(double balance)
+    private void setBalance(double balance)
     {
         this.balance = balance;
     }
 
-    public static int getIDSGENERATOR()
+    private static int getIDSGENERATOR()
     {
         return IDSGENERATOR;
     }
 
-    public static void setIDSGENERATOR(int IDSGENERATOR)
+    private static void setIDSGENERATOR(int IDSGENERATOR)
     {
         BankAccount.IDSGENERATOR = IDSGENERATOR;
     }
@@ -67,8 +67,7 @@ public class BankAccount{
     public boolean withdraw(double amountOfMoney){
     
         if(amountOfMoney<0){
-            System.err.println("invalid amount");
-            return false;
+            throw new IllegalArgumentException("Amount of Money have to be  0 or greater!");
         }
         if(amountOfMoney>balance){
             System.err.println("balance is not sufficient");
@@ -80,8 +79,7 @@ public class BankAccount{
     
     public boolean deposit(double amountOfMoney){
         if(amountOfMoney<=0){
-            System.err.println("invalid amount");
-            return false;
+            throw new IllegalArgumentException("Amount of money have to be 0 or greater");
         }
         balance+=amountOfMoney;
         return true;

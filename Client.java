@@ -8,10 +8,10 @@
 
 public class Client
 {
-    String name;
-    String address;
-    String phone;
-    BankAccount account;
+    private String name;
+    private String address;
+    private String phone;
+    private BankAccount account;
 
     public Client(String name, String address, String phone)
     {
@@ -62,9 +62,9 @@ public class Client
     
     
     public void view(){
-        System.out.println("name : "+name);
-        System.out.println("address : "+address);
-        System.out.println("phone : "+phone);
+        System.out.println("Name : "+name);
+        System.out.println("Address : "+address);
+        System.out.println("Phone : "+phone);
        // account.view();
     }
     
