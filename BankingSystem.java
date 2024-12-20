@@ -14,6 +14,7 @@ public class BankingSystem
 
     static ArrayList<Client> allClients;
     static ArrayList<BankAccount> allAccounts;
+//    static ArrayList<SavingsBankAccount> allSavingAccount;
     static Scanner input;
     private static int size;
 
@@ -44,9 +45,16 @@ public class BankingSystem
         }
         return -1;
     }
-    
+//    static int searchSavingAcountById(int accountId){
+//        for(int i=0;i<getSize();i++){
+//            if(accountId==allSavingAccount.get(i).getAccountId()){
+//                return i;
+//            }
+//        }
+//        return -1;
+//    }
     static void searchForAccount(int id){
-       
+
         BankAccount acc = search(id);
         if(acc==null){
             System.err.println("account not found");
@@ -65,20 +73,20 @@ public class BankingSystem
 //        }
 //        allAccounts.remove(acc);
 //        allClients.remove(acc.getOwner());
-        
+
         int index = searchById(id);
         if(index==-1){
             System.err.println("account not found");
             return;
-        }        
-        /* 
+        }
+        /*
         Todo: search for memory leak and how to avoid it
-        */ 
+        */
         allClients.remove(allAccounts.get(index).getOwner());
         allAccounts.remove(index);
         System.out.println("account removed successfully");
     }
-    
+
     static void addAccount(){
         input.nextLine();
         System.out.println("enter client name");
@@ -87,7 +95,7 @@ public class BankingSystem
         String address = input.nextLine();
         System.out.println("enter client phone");
         String phone = input.nextLine();
-        
+
         Client newClient = new Client(name, address, phone);
         System.out.println("please choose account type");
         System.out.println("1- basic bank account");
@@ -108,17 +116,19 @@ public class BankingSystem
         newAccount.setOwner(newClient);
         newClient.setAccount(newAccount);
         allAccounts.add(newAccount);
+//        if(accType == 2)
+//            allSavingAccount.add((SavingsBankAccount)newAccount);
         allClients.add(newClient);
         System.out.println("account created successfully");
     }
-    
+
     static void deposit(int id){
 
         int index = searchById(id);
        if(index==-1){
            System.err.println("account not found");
            return;
-       }   
+       }
        System.out.print("enter amount to deposit: ");
        double amountOfMoney=input.nextDouble();
        if(allAccounts.get(index).deposit(amountOfMoney)){
@@ -139,12 +149,12 @@ public class BankingSystem
 
 
     static void withdraw(int id){
-           
+
         int index = searchById(id);
         if(index==-1){
             System.err.println("account not found");
             return;
-        }   
+        }
         System.out.print("enter amount to withdraw: ");
         double amountOfMoney=input.nextDouble();
         if(allAccounts.get(index).withdraw(amountOfMoney)){
@@ -174,9 +184,100 @@ public class BankingSystem
        balance(ID);
    }
 
-    static void loan(BankAccount acc){
+    static void loan(BankAccount acc) {
+//        if (!(acc instanceof SavingsBankAccount)) {
+//            System.out.println("You can't take a loan with a Basic Account.");
+//            return;
+//        }
 
+        SavingsBankAccount savingsAcc = (SavingsBankAccount) acc;
+
+        // Ask for loan amount
+        System.out.print("Enter loan amount: ");
+        double loanAmount = input.nextDouble();
+
+        // Validate loan amount
+        if (loanAmount <= 0) {
+            System.err.println("Loan amount must be greater than 0.");
+            return;
+        }
+
+        // Get the interest rate and calculate the loan repayment details
+        double interestRate = 0.05;  // Assume 5% interest rate
+        int loanTermMonths = 12;  // Loan term in months
+        double monthlyPayment = calculateMonthlyPayment(loanAmount, interestRate, loanTermMonths);
+
+        System.out.println("Loan Amount: " + loanAmount);
+        System.out.println("Interest Rate: " + (interestRate * 100) + "%");
+        System.out.println("Loan Term: " + loanTermMonths + " months");
+        System.out.println("Monthly Payment: " + monthlyPayment);
+
+        // Add loan to the account
+        savingsAcc.getLoan().takeLoan(loanAmount);
+
+        // Update account balance after loan is added
+        savingsAcc.deposit(loanAmount);
+        System.out.println("Loan granted successfully!");
+
+        // Provide repayment schedule
+        System.out.println("Repayment Schedule:");
+        for (int month = 1; month <= loanTermMonths; month++) {
+            double totalAmountDue = monthlyPayment * month;
+            System.out.printf("Month %d: Total Amount Due: %.2f\n", month, totalAmountDue);
+        }
     }
+
+    static void payLoan(BankAccount acc) {
+//        if (!(acc instanceof SavingsBankAccount)) {
+//            System.out.println("Only Savings Account holders can pay loans.");
+//            return;
+//        }
+
+        SavingsBankAccount savingsAcc = (SavingsBankAccount) acc;
+        Loan loan = savingsAcc.getLoan();
+
+        // Check if there's an outstanding loan
+        if (loan.getLoanAmount() <= 0) {
+            System.out.println("No outstanding loan to pay.");
+            return;
+        }
+
+        // Display loan details
+        System.out.println("Outstanding Loan Amount: " + loan.getLoanAmount());
+        System.out.print("Enter payment amount: ");
+        double paymentAmount = input.nextDouble();
+
+        // Validate payment amount
+        if (paymentAmount <= 0) {
+            System.err.println("Payment amount must be greater than 0.");
+            return;
+        }
+
+        if (paymentAmount > savingsAcc.getBalance()) {
+            System.err.println("Insufficient funds in your account to make this payment.");
+            return;
+        }
+
+        // Deduct payment from account balance and loan amount
+        savingsAcc.withdraw(paymentAmount);
+        loan.payLoan(paymentAmount);
+
+        System.out.println("Payment successful!");
+        System.out.println("Remaining Loan Amount: " + loan.getLoanAmount());
+
+        // Check if the loan is fully paid
+        if (loan.getLoanAmount() <= 0) {
+            System.out.println("Congratulations! You have fully repaid your loan.");
+        }
+    }
+
+    // Helper method to calculate the monthly payment using the formula for loan amortization
+    private static double calculateMonthlyPayment(double loanAmount, double interestRate, int loanTermMonths) {
+        double monthlyRate = interestRate / 12;
+        return (loanAmount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -loanTermMonths));
+    }
+
+
     static void listUnpaidLoans() {
         System.out.println("Listing Unpaid Loans...");
         boolean found = false;
@@ -219,15 +320,15 @@ public class BankingSystem
         }
 
         var userAccount = search(id);
-        
+
         if(search(id) instanceof SavingsBankAccount){
             userAccount = (SavingsBankAccount) search(id);
-        }else{  
+        }else{
             userAccount = search(id);
         }
 
 
-        while (true) { 
+        while (true) {
 
             boolean back = false;
 
@@ -238,8 +339,9 @@ public class BankingSystem
             System.out.println("4. Balance");
             System.out.println("5. Get Account Information");
             System.out.println("6. Loan");
+            System.out.println("7. Pay Loan");
             System.out.println("0. back");
-            
+
             System.out.println();
             System.out.print("Enter your choice: ");
             int option = input.nextInt();
@@ -258,26 +360,33 @@ public class BankingSystem
                     balance(id);
                     break;
                 case 5:
-                    searchForAccount(id);     
-                    break; 
+                    searchForAccount(id);
+                    break;
                 case 6:
-                    
+
                     if(!(userAccount instanceof SavingsBankAccount)){
                         System.out.println("You can't take loan with Basic Account.");
-
+                        return;
                     }
                     loan(userAccount);
                     break;
+                case 7:
+                    if(!(userAccount instanceof SavingsBankAccount)){
+                        System.out.println("Only Savings Account holders can pay loans.");
+                        return;
+                    }
+                    payLoan(userAccount);
+                    break;
                 case 0:
                     back = true;
-                    break;  
+                    break;
                 default:
                     System.out.println("Invalid input!");
                     break;
             }
             if(back) break;
         }
-    
+
     }
 
 static void administer() {
@@ -353,18 +462,18 @@ static void administer() {
                 case 1:
                     user();
                     break;
-            
+
                 case 2:
                     administer();
                     break;
-            
+
                 default:
                     System.out.println("Invalid choice, please try again!!!");
                     break;
             }
         }
     }
-    
+
     static void addTestData(){
         for(int i=0;i<20;i++){
 
@@ -373,7 +482,7 @@ static void administer() {
 
             c.setAccount(ba);
             ba.setOwner(c);
-            
+
             allAccounts.add(ba);
             allClients.add(c);
         }
