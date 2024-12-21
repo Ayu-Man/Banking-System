@@ -1,19 +1,20 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Account {
+public abstract class Account implements Serializable {
+    private static final long serialVersionUID = 1L; // Added for serialization
     private double balance;
     private String password;
     private Client owner;
-    private static int idCounter = 1;
     private int accountId;
-    private List<Transaction> transactions; // List to store transactions
+    private List<Transaction> transactions;
 
-    public Account(double balance, String password) {
+    public Account(double balance, String password, int accountId) {
         this.balance = balance;
         this.password = password;
-        this.accountId = idCounter++;
-        this.transactions = new ArrayList<>(); // Initialize transaction list
+        this.accountId = accountId;
+        this.transactions = new ArrayList<>();
     }
 
     public double getBalance() {

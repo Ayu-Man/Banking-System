@@ -1,4 +1,7 @@
-public class Loan {
+import java.io.Serializable;
+
+public class Loan implements Serializable {
+    private static final long serialVersionUID = 1L; // Added for serialization
     private double loanAmount;
     private double interestRate;
     private int loanTerm; // in years

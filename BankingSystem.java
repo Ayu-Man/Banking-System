@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -6,9 +7,10 @@ public class BankingSystem {
     static ArrayList<Client> allClients = new ArrayList<>();
     static ArrayList<Account> allAccounts = new ArrayList<>();
     static Scanner input = new Scanner(System.in);
+    static int accountIdCounter = 1; // Track the account ID counter
 
     public static void main(String[] args) {
-        addTestData();
+        loadData(); // Load data at startup
         while (true) {
             printSeparator();
             System.out.println("Welcome to the Banking System!");
@@ -205,15 +207,16 @@ public class BankingSystem {
 
         Account newAccount;
         if (accType == 1) {
-            newAccount = new BankAccount(balance, password);
+            newAccount = new BankAccount(balance, password, accountIdCounter++);
         } else {
-            newAccount = new SavingsBankAccount(balance, password);
+            newAccount = new SavingsBankAccount(balance, password, accountIdCounter++);
         }
 
         newAccount.setOwner(newClient);
         newClient.setAccount(newAccount);
         allAccounts.add(newAccount);
         allClients.add(newClient);
+        saveData(); // Save data after adding an account
         System.out.println("Account created successfully.");
     }
 
@@ -233,6 +236,7 @@ public class BankingSystem {
         input.nextLine(); // consume the newline
         String newPassword = input.nextLine();
         account.changePassword(newPassword);
+        saveData(); // Save data after changing password
         System.out.println("Password changed successfully.");
     }
 
@@ -240,6 +244,7 @@ public class BankingSystem {
         System.out.print("Enter amount to deposit: ");
         double amount = getDoubleInput();
         account.deposit(amount);
+        saveData(); // Save data after deposit
         System.out.println("Deposit successful.");
     }
 
@@ -247,6 +252,7 @@ public class BankingSystem {
         System.out.print("Enter amount to withdraw: ");
         double amount = getDoubleInput();
         account.withdraw(amount);
+        saveData(); // Save data after withdrawal
         System.out.println("Withdrawal successful.");
     }
 
@@ -263,8 +269,9 @@ public class BankingSystem {
         try {
             if (account.withdraw(amount)) {
                 targetAccount.deposit(amount);
-                account.logTransaction("Transfer", amount); // Log transaction
-                targetAccount.logTransaction("Transfer", amount); // Log transaction
+                account.logTransaction("Transfer to ID: " + targetAccount.getAccountId(), amount); // Log transaction
+                targetAccount.logTransaction("Transfer from ID: " + account.getAccountId(), amount); // Log transaction
+                saveData(); // Save data after transfer
                 System.out.println("Transfer completed!");
             }
         } catch (BankingException e) {
@@ -278,6 +285,8 @@ public class BankingSystem {
         try {
             account.getLoan().takeLoan(loanAmount);
             account.deposit(loanAmount); // Update balance after loan
+            account.logTransaction("Loan taken", loanAmount); // Log loan transaction
+            saveData(); // Save data after loan
             System.out.println("Loan granted successfully!");
             System.out.println("Total Interest on Loan: " + account.getLoan().calculateInterest());
         } catch (BankingException e) {
@@ -291,6 +300,8 @@ public class BankingSystem {
         try {
             account.getLoan().payLoan(paymentAmount);
             account.withdraw(paymentAmount);
+            account.logTransaction("Loan payment", paymentAmount); // Log loan payment transaction
+            saveData(); // Save data after loan payment
             System.out.println("Payment successful!");
         } catch (BankingException e) {
             System.out.println(e.getMessage());
@@ -325,6 +336,7 @@ public class BankingSystem {
         }
         allClients.remove(account.getOwner());
         allAccounts.remove(account);
+        saveData(); // Save data after removing an account
         System.out.println("Account removed successfully.");
     }
 
@@ -366,14 +378,28 @@ public class BankingSystem {
         System.out.println("====================================");
     }
 
-    static void addTestData() {
-        for (int i = 0; i < 20; i++) {
-            Account ba = new BankAccount(i * 50000, "1234");
-            Client c = new Client("Name " + i, "Address " + i, "123456");
-            c.setAccount(ba);
-            ba.setOwner(c);
-            allAccounts.add(ba);
-            allClients.add(c);
+    static void saveData() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("clients_accounts.dat"))) {
+            oos.writeObject(allClients);
+            oos.writeObject(allAccounts);
+            System.out.println("Data saved successfully.");
+        } catch (IOException e) {
+            System.err.println("Error saving data: " + e.getMessage());
+        }
+    }
+
+    static void loadData() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("clients_accounts.dat"))) {
+            allClients = (ArrayList<Client>) ois.readObject();
+            allAccounts = (ArrayList<Account>) ois.readObject();
+            if (!allAccounts.isEmpty()) {
+                accountIdCounter = allAccounts.get(allAccounts.size() - 1).getAccountId() + 1; // Set counter to next ID
+            }
+            System.out.println("Data loaded successfully.");
+        } catch (FileNotFoundException e) {
+            System.out.println("No data file found, starting fresh.");
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error loading data: " + e.getMessage());
         }
     }
 }

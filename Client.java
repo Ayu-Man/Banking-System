@@ -1,4 +1,7 @@
-public class Client {
+import java.io.Serializable;
+
+public class Client implements Serializable {
+    private static final long serialVersionUID = 1L; // Added for serialization
     private String name;
     private String address;
     private String phone;

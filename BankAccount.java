@@ -1,6 +1,6 @@
 public class BankAccount extends Account {
-    public BankAccount(double balance, String password) {
-        super(balance, password);
+    public BankAccount(double balance, String password , int accountId) {
+        super(balance, password , accountId);
     }
 
     @Override

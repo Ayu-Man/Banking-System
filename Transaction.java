@@ -1,21 +1,23 @@
-import java.time.LocalDateTime;
+import java.io.Serializable;
 
-public class Transaction {
-    private String type; // "Deposit", "Withdrawal", "Transfer"
+public class Transaction implements Serializable {
+    private static final long serialVersionUID = 1L; // Added for serialization
+    private String type;
     private double amount;
-    private LocalDateTime dateTime;
     private int accountId;
 
     public Transaction(String type, double amount, int accountId) {
         this.type = type;
         this.amount = amount;
         this.accountId = accountId;
-        this.dateTime = LocalDateTime.now();
     }
 
     @Override
     public String toString() {
-        return String.format("%s of %.2f on %s for Account ID: %d",
-                type, amount, dateTime, accountId);
+        return "Transaction{" +
+                "type='" + type + '\'' +
+                ", amount=" + amount +
+                ", accountId=" + accountId +
+                '}';
     }
 }

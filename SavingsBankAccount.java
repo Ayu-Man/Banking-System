@@ -1,8 +1,8 @@
 public class SavingsBankAccount extends Account {
     private Loan loan;
 
-    public SavingsBankAccount(double balance, String password) {
-        super(balance, password);
+    public SavingsBankAccount(double balance, String password , int accountId) {
+        super(balance, password ,accountId);
         this.loan = new Loan();
     }
 
