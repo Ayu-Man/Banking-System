@@ -14,10 +14,6 @@ public class Transaction implements Serializable {
 
     @Override
     public String toString() {
-        return "Transaction{" +
-                "type='" + type + '\'' +
-                ", amount=" + amount +
-                ", accountId=" + accountId +
-                '}';
+        return type + "," + amount + "," + accountId; // Format for easy loading
     }
 }

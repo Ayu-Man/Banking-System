@@ -1,4 +1,4 @@
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +17,7 @@ public abstract class Account implements Serializable {
         this.accountId = accountId;
         this.transactions = new ArrayList<>();
         this.loan = new Loan(); // Initialize a loan object
+        loadTransactions(); // Load existing transactions
     }
 
     public double getBalance() {
@@ -69,6 +70,33 @@ public abstract class Account implements Serializable {
 
     public void logTransaction(String type, double amount) {
         transactions.add(new Transaction(type, amount, accountId));
+        saveTransactions(); // Save transaction immediately after logging
+    }
+
+    private void saveTransactions() {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(accountId + "_transactions.txt"))) {
+            for (Transaction transaction : transactions) {
+                writer.println(transaction);
+            }
+        } catch (IOException e) {
+            System.err.println("Error saving transactions: " + e.getMessage());
+        }
+    }
+
+    private void loadTransactions() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(accountId + "_transactions.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(","); // Assuming your Transaction's toString() method formats as needed
+                String type = data[0];
+                double amount = Double.parseDouble(data[1]);
+                transactions.add(new Transaction(type, amount, accountId));
+            }
+        } catch (FileNotFoundException e) {
+            // No previous transactions
+        } catch (IOException e) {
+            System.err.println("Error loading transactions: " + e.getMessage());
+        }
     }
 
     public List<Transaction> getTransactions() {
