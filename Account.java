@@ -9,12 +9,14 @@ public abstract class Account implements Serializable {
     private Client owner;
     private int accountId;
     private List<Transaction> transactions;
+    private Loan loan;
 
     public Account(double balance, String password, int accountId) {
         this.balance = balance;
         this.password = password;
         this.accountId = accountId;
         this.transactions = new ArrayList<>();
+        this.loan = new Loan(); // Initialize a loan object
     }
 
     public double getBalance() {
@@ -29,28 +31,32 @@ public abstract class Account implements Serializable {
         return accountId;
     }
 
+    public Loan getLoan() {
+        return loan;
+    }
+
     public void changePassword(String newPassword) {
         this.password = newPassword;
     }
 
-    public void deposit(double amount) throws BankingException {
+    public void deposit(double amount) throws Exception {
         if (amount <= 0) {
-            throw new BankingException("Deposit amount must be positive.");
+            throw new Exception("Deposit amount must be positive.");
         }
         this.balance += amount;
         logTransaction("Deposit", amount); // Log transaction
     }
 
-    public boolean withdraw(double amount) throws BankingException {
+    public boolean withdraw(double amount) throws Exception {
         if (amount <= 0) {
-            throw new BankingException("Withdrawal amount must be positive.");
+            throw new Exception("Withdrawal amount must be positive.");
         }
         if (amount > this.balance) {
-            throw new BankingException("Insufficient funds.");
+            throw new Exception("Insufficient funds.");
         }
         this.balance -= amount;
         logTransaction("Withdrawal", amount); // Log transaction
-        return true;
+        return true; // Indicate successful withdrawal
     }
 
     public void setOwner(Client owner) {

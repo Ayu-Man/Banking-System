@@ -13,11 +13,23 @@ public class Client implements Serializable {
         this.phone = phone;
     }
 
-    public void setAccount(Account account) {
-        this.account = account;
+    public String getName() {
+        return name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getPhone() {
+        return phone;
     }
 
     public Account getAccount() {
         return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
     }
 }

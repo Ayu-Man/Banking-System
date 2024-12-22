@@ -4,36 +4,22 @@ public class Loan implements Serializable {
     private static final long serialVersionUID = 1L; // Added for serialization
     private double loanAmount;
     private double interestRate;
-    private int loanTerm; // in years
 
     public Loan() {
         this.loanAmount = 0;
-        this.interestRate = 0.05; // default interest rate of 5%
-        this.loanTerm = 1; // default loan term of 1 year
+        this.interestRate = 0.05; // Example interest rate of 5%
     }
 
-    public void takeLoan(double amount) throws BankingException {
-        if (amount <= 0) {
-            throw new BankingException("Loan amount must be greater than zero.");
-        }
-        this.loanAmount += amount; // Add to existing loan amount
+    public void takeLoan(double amount, double interest) {
+        this.loanAmount += amount + interest; // Total loan is amount plus interest
     }
 
-    public void payLoan(double amount) throws BankingException {
-        if (amount <= 0) {
-            throw new BankingException("Payment amount must be positive.");
-        }
-        if (amount > loanAmount) {
-            throw new BankingException("Payment exceeds remaining loan amount.");
-        }
-        loanAmount -= amount; // Deduct from loan amount
+    public double calculateInterest(double amount, int months) {
+        double totalInterest = (amount * interestRate) * months; // Simple interest calculation
+        return totalInterest;
     }
 
-    public double getLoanAmount() {
-        return loanAmount;
-    }
-
-    public double calculateInterest() {
-        return loanAmount * interestRate * loanTerm; // Simple interest calculation
+    public double getRemainingCredit() {
+        return loanAmount; // Return the total loan amount including interest
     }
 }

@@ -1,13 +1,8 @@
 public class SavingsBankAccount extends Account {
-    private Loan loan;
+    private static final long serialVersionUID = 1L; // Added for serialization
 
-    public SavingsBankAccount(double balance, String password , int accountId) {
-        super(balance, password ,accountId);
-        this.loan = new Loan();
-    }
-
-    public Loan getLoan() {
-        return loan;
+    public SavingsBankAccount(double balance, String password, int accountId) {
+        super(balance, password, accountId);
     }
 
     @Override
@@ -15,6 +10,5 @@ public class SavingsBankAccount extends Account {
         System.out.println("Account Type: Savings Bank Account");
         System.out.println("Account ID: " + getAccountId());
         System.out.println("Balance: " + getBalance());
-        System.out.println("Current Loan Amount: " + loan.getLoanAmount());
     }
 }
