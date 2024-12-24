@@ -50,19 +50,19 @@ public class BankingSystem {
 
     static void printWelcomeMessage() {
         System.out.println(ANSI_BLUE +
-                "\t\t\t\t\t\t\t\t*****************************************************" + ANSI_RESET);
+                "\t\t\t\t\t*****************************************************" + ANSI_RESET);
         System.out.println(ANSI_CYAN +
-                "\t\t\t\t\t\t\t\t*\t             WELCOME TO THE                 \t*" + ANSI_RESET);
+                "\t\t\t\t\t*\t             WELCOME TO THE                 \t*" + ANSI_RESET);
         System.out.println(ANSI_CYAN +
-                "\t\t\t\t\t\t\t\t*\t             BANKING SYSTEM                 \t*" + ANSI_RESET);
+                "\t\t\t\t\t*\t             BANKING SYSTEM                 \t*" + ANSI_RESET);
         System.out.println(ANSI_BLUE +
-                "\t\t\t\t\t\t\t\t*****************************************************" + ANSI_RESET);
+                "\t\t\t\t\t*****************************************************" + ANSI_RESET);
         System.out.println(ANSI_GREEN +
-                "\t\t\t\t\t\t\t\t*   Manage your finances with ease and security!\t*" + ANSI_RESET);
+                "\t\t\t\t\t*   Manage your finances with ease and security!\t*" + ANSI_RESET);
         System.out.println(ANSI_GREEN +
-                "\t\t\t\t\t\t\t\t*   Enjoy our 24/7 services at your fingertips! \t*" + ANSI_RESET);
+                "\t\t\t\t\t*   Enjoy our 24/7 services at your fingertips! \t*" + ANSI_RESET);
         System.out.println(ANSI_BLUE +
-                "\t\t\t\t\t\t\t\t*****************************************************" + ANSI_RESET);
+                "\t\t\t\t\t*****************************************************" + ANSI_RESET);
     }
 
     static void user() {
