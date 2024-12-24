@@ -1,6 +1,4 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class Account implements Serializable {
     private static final long serialVersionUID = 1L; // Added for serialization
@@ -8,14 +6,12 @@ public abstract class Account implements Serializable {
     private String password;
     private Client owner;
     private int accountId;
-    private List<Transaction> transactions;
     private Loan loan;
 
     public Account(double balance, String password, int accountId) {
         this.balance = balance;
         this.password = password;
         this.accountId = accountId;
-        this.transactions = new ArrayList<>();
         this.loan = new Loan(); // Initialize a loan object
         loadTransactions(); // Load existing transactions
     }
@@ -69,38 +65,37 @@ public abstract class Account implements Serializable {
     }
 
     public void logTransaction(String type, double amount) {
-        transactions.add(new Transaction(type, amount, accountId));
-        saveTransactions(); // Save transaction immediately after logging
+        String transaction = new Transaction(type, amount, accountId).toString();
+        saveTransactionToFile(transaction); // Save to a single file
     }
 
-    private void saveTransactions() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(accountId + "_transactions.txt"))) {
-            for (Transaction transaction : transactions) {
-                writer.println(transaction);
-            }
+    private void saveTransactionToFile(String transaction) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter("all_transactions.txt", true))) {
+            writer.println(transaction);
         } catch (IOException e) {
-            System.err.println("Error saving transactions: " + e.getMessage());
+            System.err.println("Error saving transaction: " + e.getMessage());
         }
     }
 
     private void loadTransactions() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(accountId + "_transactions.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("all_transactions.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] data = line.split(","); // Assuming your Transaction's toString() method formats as needed
-                String type = data[0];
-                double amount = Double.parseDouble(data[1]);
-                transactions.add(new Transaction(type, amount, accountId));
+                String[] data = line.split(",");
+                int accId = Integer.parseInt(data[0]);
+                String type = data[1];
+                double amount = Double.parseDouble(data[2]);
+
+                // Only load transactions related to this account
+                if (accId == accountId) {
+                    // Handle loading logic if needed
+                }
             }
         } catch (FileNotFoundException e) {
             // No previous transactions
         } catch (IOException e) {
             System.err.println("Error loading transactions: " + e.getMessage());
         }
-    }
-
-    public List<Transaction> getTransactions() {
-        return transactions;
     }
 
     public abstract void view();

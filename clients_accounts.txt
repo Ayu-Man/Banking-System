@@ -1,1 +1,6 @@
-Ayanaw Mengesha,Addis Ababa,0980583477,1,10000.0,1234
+Ayanaw Mengesha,Addis Ababa,0980583477,1,21234.0,1234
+Ashenafi Mulugeta,Addis Ababa,0942090909,2,17991.0,1234
+Anna Abdiyu,Debrezeit,094848383,3,141000.0,1234
+Aman Yosef,Addis Ababa,09436784,4,13309.0,1234
+Aman wubishet,Arbaminch,08765456,5,11900.0,1234
+Amir Abdela,Addis Ababa,098756723,6,2000.0,1234

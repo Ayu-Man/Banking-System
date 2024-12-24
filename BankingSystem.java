@@ -50,19 +50,19 @@ public class BankingSystem {
 
     static void printWelcomeMessage() {
         System.out.println(ANSI_BLUE +
-                "\t\t\t\t\t\t\t\t\t\t\t\t\t*****************************************************" + ANSI_RESET);
+                "\t\t\t\t\t\t\t\t*****************************************************" + ANSI_RESET);
         System.out.println(ANSI_CYAN +
-                "\t\t\t\t\t\t\t\t\t\t\t\t\t*\t             WELCOME TO THE                 \t*" + ANSI_RESET);
+                "\t\t\t\t\t\t\t\t*\t             WELCOME TO THE                 \t*" + ANSI_RESET);
         System.out.println(ANSI_CYAN +
-                "\t\t\t\t\t\t\t\t\t\t\t\t\t*\t             BANKING SYSTEM                 \t*" + ANSI_RESET);
+                "\t\t\t\t\t\t\t\t*\t             BANKING SYSTEM                 \t*" + ANSI_RESET);
         System.out.println(ANSI_BLUE +
-                "\t\t\t\t\t\t\t\t\t\t\t\t\t*****************************************************" + ANSI_RESET);
+                "\t\t\t\t\t\t\t\t*****************************************************" + ANSI_RESET);
         System.out.println(ANSI_GREEN +
-                "\t\t\t\t\t\t\t\t\t\t\t\t\t*   Manage your finances with ease and security!\t*" + ANSI_RESET);
+                "\t\t\t\t\t\t\t\t*   Manage your finances with ease and security!\t*" + ANSI_RESET);
         System.out.println(ANSI_GREEN +
-                "\t\t\t\t\t\t\t\t\t\t\t\t\t*   Enjoy our 24/7 services at your fingertips! \t*" + ANSI_RESET);
+                "\t\t\t\t\t\t\t\t*   Enjoy our 24/7 services at your fingertips! \t*" + ANSI_RESET);
         System.out.println(ANSI_BLUE +
-                "\t\t\t\t\t\t\t\t\t\t\t\t\t*****************************************************" + ANSI_RESET);
+                "\t\t\t\t\t\t\t\t*****************************************************" + ANSI_RESET);
     }
 
     static void user() {
@@ -342,7 +342,7 @@ public class BankingSystem {
             System.out.println("Client Name: " + ownerName);
             System.out.println("Account Type: " + (account instanceof BankAccount ? "Basic Bank Account" : "Savings Bank Account"));
             System.out.println("Balance: " + account.getBalance());
-            System.out.println("*******************************");
+            System.out.println(ANSI_BLUE + "*******************************" + ANSI_RESET);
         }
     }
 
@@ -380,14 +380,25 @@ public class BankingSystem {
         System.out.println("Balance: " + acc.getBalance());
         System.out.println("*******************************");
     }
-
     static void viewTransactions(Account account) {
         System.out.println("Transaction History for Account ID: " + account.getAccountId());
-        for (Transaction transaction : account.getTransactions()) {
-            System.out.println(transaction);
+        try (BufferedReader reader = new BufferedReader(new FileReader("all_transactions.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                int accId = Integer.parseInt(data[0]);
+                String type = data[1];
+                double amount = Double.parseDouble(data[2]);
+                String timestamp = data[3]; // Get the timestamp
+    
+                if (accId == account.getAccountId()) {
+                    System.out.println(type + ": " + amount + " on " + timestamp);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error loading transactions: " + e.getMessage());
         }
     }
-
     static void takeLoan(Account account) {
         System.out.print("Enter loan amount: ");
         double amount = getDoubleInput();
