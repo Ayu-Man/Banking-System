@@ -25,7 +25,7 @@ public class BankingSystem {
         loadData(); // Load data at startup
         while (true) {
             printSeparator();
-//            System.out.println(ANSI_YELLOW + "Welcome to the Banking System!" + ANSI_RESET);
+            //System.out.println(ANSI_YELLOW + "Welcome to the Banking System!" + ANSI_RESET);
             System.out.println("1. User");
             System.out.println("2. Administer");
             System.out.print("Enter your choice (0 to exit): ");
@@ -108,8 +108,9 @@ public class BankingSystem {
                 System.out.println("99. Exit Program"); // New option to exit the program
                 System.out.print("Enter your choice: ");
                 int option = getIntInput();
-
+                printSeparator();
                 try {
+
                     if (option == 0) return; // Back to main menu
                     if (option == 99) {
                         System.out.println("Exiting the program. Goodbye!");
@@ -178,6 +179,7 @@ public class BankingSystem {
             System.out.println("99. Exit Program"); // New option to exit the program
             System.out.print("Enter your choice: ");
             int option = getIntInput();
+            printSeparator();
 
             if (option == 0) return; // Exit admin mode
             if (option == 99) {
@@ -333,7 +335,7 @@ public class BankingSystem {
     }
 
     static void showAllAccounts() {
-        printSeparator();
+        
         System.out.println(ANSI_YELLOW + "List of All Accounts" + ANSI_RESET);
         for (Account account : allAccounts) {
             Client owner = account.getOwner();
@@ -440,7 +442,7 @@ public class BankingSystem {
         saveData(); // Save data after payment
     }
     static void listUnpaidLoans() {
-        printSeparator();
+        
         System.out.println(ANSI_YELLOW + "Unpaid Loans:" + ANSI_RESET);
         boolean hasUnpaidLoans = false;
 
